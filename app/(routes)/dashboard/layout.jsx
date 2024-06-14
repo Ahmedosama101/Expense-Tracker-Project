@@ -2,14 +2,15 @@
 import React, { useEffect } from 'react'
 import SideNav from './_components/SideNav'
 import DashboardHeader from './_components/DashboardHeader.'
-/* import { db } from '@/utils/dbConfig'
-import { Budgets } from '@/utils/schema'
-import { eq } from 'drizzle-orm' */
+ import { db } from '/db'
+import { Budgets } from '/schema'
+import { eq } from 'drizzle-orm'
 import { useUser } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
 function DashboardLayout({children}) {
   
- /*  const {user}=useUser();
- 
+  const {user}=useUser();
+ const router=useRouter();
   useEffect(()=>{
     user&&checkUserBudget()
   },[user])
@@ -17,7 +18,10 @@ function DashboardLayout({children}) {
   const checkUserBudget=async()=>{
     const result=await db.select().from(Budgets).where(eq(Budgets.creactedBy,user?.primaryEmailAddress?.emailAdress))
     console.log(result);
-  } */
+    if(result?.length==0){
+router.replace('/dashboard/budgets')
+    }
+  } 
   return (
     <div>
         <div className='fixed md:w-64 hidden md:block'>
