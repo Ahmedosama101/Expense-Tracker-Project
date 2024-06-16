@@ -1,5 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { PenBox } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -11,51 +13,55 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import EmojiPicker from "emoji-picker-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { db } from "@/db";
-import { Budgets } from "@/schema";
 import { useUser } from "@clerk/nextjs";
+import { Input } from "@/components/ui/input";
+import { eq } from "drizzle-orm";
+import { Budgets } from "@/schema";
+import { db } from "@/db";
 import { toast } from "sonner";
 
-function CreateBudget({ refershData }) {
-  const [emojiIcon, setEmojiIcon] = useState("😂");
+function EditBudget({ budgetInfo, refershData }) {
+  const [emojiIcon, setEmojiIcon] = useState(budgetInfo?.icon);
   const [openEmojipicker, setOpenemojipicker] = useState(false);
   const [name, setName] = useState();
   const [amount, setAmount] = useState();
   const { user } = useUser();
-  /* creating Budget Function */
-  const onCreateBudget = async () => {
+
+  useEffect(() => {
+    if (budgetInfo) {
+      setEmojiIcon(budgetInfo?.icon);
+      setName(budgetInfo?.name);
+      setAmount(budgetInfo?.amount);
+    }
+  }, [budgetInfo]);
+  const onUpdateBudget = async () => {
     const result = await db
-      .insert(Budgets)
-      .values({
+      .update(Budgets)
+      .set({
         name: name,
         amount: amount,
-        creactedBy: user?.primaryEmailAddress.emailAddress,
         icon: emojiIcon,
       })
-      .returning({ insertedId: Budgets.id });
+      .where(eq(Budgets.id, budgetInfo.id))
+      .returning();
 
     if (result) {
       refershData();
-      toast("New Budget Created");
+
+      toast("Budget Updated");
     }
   };
   return (
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <div
-            className="bg-slate-100 p-10 rounded-md items-center flex flex-col border-2
-            border-dashed cursor-pointer hover:shadow-md"
-          >
-            <h2 className="text-3xl">+</h2>
-            <h2>Create New Budget</h2>
-          </div>
+          <Button className="flex gap-2">
+            <PenBox /> Edit
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New Budget</DialogTitle>
+            <DialogTitle>Edit Budget</DialogTitle>
             <DialogDescription>
               <div className="mt-5">
                 <Button
@@ -77,6 +83,7 @@ function CreateBudget({ refershData }) {
                 <div className="mt-2">
                   <h2 className="text-black font-medium my-1">Budget Name</h2>
                   <Input
+                    defaultValue={budgetInfo?.name}
                     placeholder="e.g. Rent"
                     onChange={(e) => setName(e.target.value)}
                   />
@@ -84,6 +91,7 @@ function CreateBudget({ refershData }) {
                 <div className="mt-2">
                   <h2 className="text-black font-medium my-1">Budget Amount</h2>
                   <Input
+                    defaultValue={budgetInfo?.amount}
                     placeholder="3000 QAR"
                     type="number"
                     onChange={(e) => setAmount(e.target.value)}
@@ -96,10 +104,10 @@ function CreateBudget({ refershData }) {
             <DialogClose asChild>
               <Button
                 disabled={!(name && amount)}
-                onClick={() => onCreateBudget()}
+                onClick={() => onUpdateBudget()}
                 className="mt-5 w-full"
               >
-                Create Budget
+                Update Budget
               </Button>
             </DialogClose>
           </DialogFooter>
@@ -109,4 +117,4 @@ function CreateBudget({ refershData }) {
   );
 }
 
-export default CreateBudget;
+export default EditBudget;
