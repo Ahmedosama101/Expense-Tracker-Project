@@ -9,7 +9,7 @@ import AddExpense from "../../Expenses/_components/AddExpense";
 import EditBudget from "../../Expenses/_components/EditBudget";
 import ExpensesListTable from "../../Expenses/_components/ExpensesListTable";
 import { Button } from "@/components/ui/button";
-import { PenBox, Trash } from "lucide-react";
+import { ArrowLeft, Trash } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -77,14 +77,17 @@ function ExpensesScreen({ params }) {
   };
   return (
     <div className="p-10">
-      <h2 className="text-2xl font-bold flex justify-between items-center">
+      <h2 className="text-2xl font-bold flex items-center">
+        <ArrowLeft
+          className="mr-5 cursor-pointer"
+          onClick={() => route.replace("/dashboard/budgets")}
+        />{" "}
         My Expenses
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center ml-auto">
           <EditBudget
             budgetInfo={budgetInfo}
             refershData={() => getBudgetInfo()}
           />
-
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button className="flex gap-2" variant="destructive">
@@ -125,7 +128,6 @@ function ExpensesScreen({ params }) {
         />
       </div>
       <div className="mt-4">
-        <h2 className="font-bold text-lg">Latest Expenses</h2>
         <ExpensesListTable
           expensesList={expensesList}
           refershData={() => getBudgetInfo()}
