@@ -4,7 +4,7 @@ import { useUser } from "@clerk/nextjs";
 import { db } from "@/db";
 import { Budgets, Expenses } from "@/schema";
 import { desc, eq, getTableColumns, sql } from "drizzle-orm";
-import ExpensesListTable from "../Expenses/_components/ExpensesListTable";
+import ExpensesListTable from "../expenses/_components/ExpensesListTable";
 
 function Page() {
   const { user } = useUser();
