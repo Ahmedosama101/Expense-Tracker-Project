@@ -57,7 +57,7 @@ function Dashboard() {
 
   return (
     <div className="p-8">
-      <h2 className="font-bold text-3xl">Hi, {user?.fullName}✌️</h2>
+      <h2 className="font-bold text-3xl">Hi, {user?.firstName}✌️</h2>
       <p className="text-gray-500">
         Let's Manage Your Expenses!! Set Your Budgets & its Expenses with ET
       </p>

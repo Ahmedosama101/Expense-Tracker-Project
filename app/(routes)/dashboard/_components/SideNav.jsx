@@ -1,11 +1,14 @@
 "use client";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { LayoutGrid, ReceiptText, WalletMinimal } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect } from "react";
+
 function SideNav() {
+  const { user } = useUser();
+
   const menuList = [
     {
       id: 1,
@@ -56,7 +59,7 @@ function SideNav() {
       </div>
       <div className="fixed bottom-10 p-5 flex gap-2 items-center">
         <UserButton />
-        profile
+        {user?.fullName}
       </div>
     </div>
   );
