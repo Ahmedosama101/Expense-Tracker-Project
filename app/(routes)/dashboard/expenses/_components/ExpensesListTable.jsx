@@ -68,7 +68,6 @@ function ExpensesListTable({ expensesList, refershData }) {
       ) : (
         <div className="p-2 text-center text-gray-50">No expenses to show</div>
       )}
-
       {isDialogOpen && selectedExpense && (
         <EditExpense
           expenseInfo={selectedExpense}

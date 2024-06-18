@@ -8,15 +8,16 @@ import { db } from "@/db";
 import { Budgets, Expenses } from "@/schema";
 import BudgetItem from "./budgets/_components/BudgetItem";
 import ExpensesListTable from "./Expenses/_components/ExpensesListTable";
-//import BudgetItem from "../dashboard/budgets/_components/BudgetItem";
 
 function Dashboard() {
   const { user } = useUser();
-
   const [budgetList, setBudgetList] = useState([]);
   const [expensesList, setExpensesList] = useState([]);
+
   useEffect(() => {
-    user && getBudgetList();
+    if (user) {
+      getBudgetList();
+    }
   }, [user]);
 
   const getBudgetList = async () => {
@@ -31,7 +32,9 @@ function Dashboard() {
       .where(eq(Budgets.creactedBy, user?.primaryEmailAddress?.emailAddress))
       .groupBy(Budgets.id)
       .orderBy(desc(Budgets.id));
+
     setBudgetList(result);
+    console.log("Budget List:", result); // Debugging log
     getAllExpenses();
   };
 
@@ -43,30 +46,30 @@ function Dashboard() {
         amount: Expenses.amount,
         createdAt: Expenses.creactedAt,
       })
-      .from(Budgets)
-      .leftJoin(Expenses, eq(Budgets.id, Expenses.budgetId))
+      .from(Expenses)
+      .leftJoin(Budgets, eq(Expenses.budgetId, Budgets.id))
       .where(eq(Budgets.creactedBy, user?.primaryEmailAddress?.emailAddress))
       .orderBy(desc(Expenses.id));
+
     setExpensesList(result);
+    console.log("Expenses List:", result); // Debugging log
   };
 
   return (
     <div className="p-8">
       <h2 className="font-bold text-3xl">Hi, {user?.fullName}✌️</h2>
       <p className="text-gray-500">
-        Here's what's happening with your money, Let's Manage Your Expenses!!
+        Let's Manage Your Expenses!! Set Your Budgets & its Expenses with ET
       </p>
-
       <CardInfo budgetList={budgetList} />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-6 gap-5">
         <div className="md:col-span-2">
           <BarChartDashboard budgetList={budgetList} />
           <ExpensesListTable
             expensesList={expensesList}
-            refershData={() => getBudgetList}
+            refershData={getBudgetList} // Fix typo and pass function reference
           />
         </div>
-
         <div className="grid gap-5">
           <h2 className="font-bold text-lg">Latest Budget</h2>
           {budgetList.map((budget, index) => (

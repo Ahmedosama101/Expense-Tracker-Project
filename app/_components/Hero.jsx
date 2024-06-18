@@ -42,7 +42,7 @@ function Hero() {
           </div>
         </div>
         <Image
-          src="/dashboard.png"
+          src="/dashboard1.png"
           alt="dashboard placeholder"
           width={1000}
           height={700}

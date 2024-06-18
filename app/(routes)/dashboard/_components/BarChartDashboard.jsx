@@ -28,13 +28,13 @@ function BarChartDashboard({ budgetList }) {
             name="total spent"
             dataKey="totalSpend"
             stackId="a"
-            fill="#4845d2"
+            fill="#5e548e"
           />
           <Bar
             name="budget amount"
             dataKey="amount"
             stackId="a"
-            fill="#C3C2FF"
+            fill="#e0b1cb"
           />
         </BarChart>
       </ResponsiveContainer>
