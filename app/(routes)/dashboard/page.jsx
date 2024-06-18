@@ -7,7 +7,7 @@ import { desc, eq, getTableColumns, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { Budgets, Expenses } from "@/schema";
 import BudgetItem from "./budgets/_components/BudgetItem";
-import ExpensesListTable from "./Expenses/_components/ExpensesListTable";
+import ExpensesListTable from "./expenses/_components/ExpensesListTable";
 
 function Dashboard() {
   const { user } = useUser();
