@@ -30,16 +30,12 @@ function DashboardLayout({ children }) {
 
   return (
     <div className="flex">
-      <div
-        className={`fixed ${
-          sidebarExpanded ? "md:w-64" : "md:w-20"
-        }  md:block transition-all duration-300`}
-      >
+      <div>
         <SideNav className="bg-opacity-100" />
       </div>
       <div
         className={`flex-1 ${
-          sidebarExpanded ? "md:ml-16 ml-16" : "md:ml-50"
+          sidebarExpanded ? "md:ml-0 ml-16" : "md:ml-50"
         } transition-all duration-300`}
       >
         <DashboardHeader />
