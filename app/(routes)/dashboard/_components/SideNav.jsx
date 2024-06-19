@@ -1,67 +1,139 @@
 "use client";
+import { useContext, createContext, useState, useEffect } from "react";
 import { UserButton, useUser } from "@clerk/nextjs";
-import { LayoutGrid, ReceiptText, WalletMinimal } from "lucide-react";
+import {
+  LayoutGrid,
+  ReceiptText,
+  WalletMinimal,
+  ChevronFirst,
+  ChevronLast,
+  MoreVertical,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useEffect } from "react";
+
+const SidebarContext = createContext();
 
 function SideNav() {
   const { user } = useUser();
+  const [expanded, setExpanded] = useState(true);
+  const path = usePathname();
 
   const menuList = [
     {
       id: 1,
       name: "Dashboard",
-      icon: LayoutGrid,
+      icon: <LayoutGrid />,
       path: "/dashboard",
     },
     {
       id: 2,
       name: "Budgets",
-      icon: WalletMinimal,
+      icon: <WalletMinimal />,
       path: "/dashboard/budgets",
     },
     {
       id: 3,
       name: "Expenses",
-      icon: ReceiptText,
+      icon: <ReceiptText />,
       path: "/dashboard/expensespage",
     },
   ];
 
-  const path = usePathname();
-
   useEffect(() => {
     console.log(path);
   }, [path]);
+
   return (
-    <div className="h-screen p-5 border shadow-md">
-      <Link href="/">
-        <Image src={"./logo.svg"} alt="logo" width={60} height={20} />
-      </Link>
-      <div className="mt-5">
-        {menuList.map((menu, index) => (
-          <Link href={menu.path}>
-            <h2
-              className={`flex gap-2 items-center
-             text-gray-500 font-medium mb-2
-              p-5 cursor-pointer rounded-md
-              hover:text-primary hover:bg-blue-200
-              ${path == menu.path && "text-primary bg-blue-100"}
-              `}
+    <SidebarContext.Provider value={{ expanded }}>
+      <aside
+        className={`h-screen transition-all duration-300 ${
+          expanded ? "w-64" : "w-16"
+        } bg-white border-r shadow-sm fixed md:static`}
+      >
+        <nav className="h-full flex flex-col">
+          <div className="p-4 pb-2 flex justify-between items-center">
+            <Link href="/">
+              <Image
+                src={"/logo.svg"}
+                alt="logo"
+                width={60}
+                height={20}
+                className={`overflow-hidden transition-all ${
+                  expanded ? "block" : "hidden"
+                }`}
+              />
+            </Link>
+            <button
+              onClick={() => setExpanded((curr) => !curr)}
+              className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100"
             >
-              <menu.icon />
-              {menu.name}
-            </h2>
-          </Link>
-        ))}
-      </div>
-      <div className="fixed bottom-10 p-5 flex gap-2 items-center">
-        <UserButton />
-        {user?.fullName}
-      </div>
-    </div>
+              {expanded ? <ChevronFirst /> : <ChevronLast />}
+            </button>
+          </div>
+
+          <ul className="flex-1 px-3">
+            {menuList.map((menu) => (
+              <SidebarItem
+                key={menu.id}
+                icon={menu.icon}
+                text={menu.name}
+                active={path === menu.path}
+                path={menu.path}
+              />
+            ))}
+          </ul>
+
+          <div className="border-t flex p-3">
+            <UserButton />
+            <div
+              className={`flex justify-between items-center overflow-hidden transition-all ${
+                expanded ? "w-52 ml-3" : "w-0"
+              }`}
+            >
+              <div className="leading-4">
+                <h4 className="font-semibold">{user?.fullName}</h4>
+                <span className="text-xs text-gray-600">
+                  {user?.primaryEmailAddress?.emailAddress}
+                </span>
+              </div>
+              {/*    <MoreVertical size={20} /> */}
+            </div>
+          </div>
+        </nav>
+      </aside>
+    </SidebarContext.Provider>
+  );
+}
+
+function SidebarItem({ icon, text, active, path }) {
+  const { expanded } = useContext(SidebarContext);
+
+  return (
+    <li
+      className={`relative flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${
+        active
+          ? "bg-gradient-to-tr from-indigo-200 to-indigo-100 text-indigo-800"
+          : "hover:bg-indigo-50 text-gray-600"
+      }`}
+    >
+      <Link href={path} className="flex items-center">
+        {icon}
+        <span
+          className={`overflow-hidden transition-all ${
+            expanded ? "w-52 ml-3" : "w-0"
+          }`}
+        >
+          {text}
+        </span>
+      </Link>
+      {!expanded && (
+        <div className=" left-full rounded-md px-2 py-1 ml-6 bg-indigo-100 text-indigo-800 text-sm invisible opacity-20 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0">
+          {text}
+        </div>
+      )}
+    </li>
   );
 }
 
