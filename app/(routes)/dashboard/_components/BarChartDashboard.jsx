@@ -19,6 +19,7 @@ function BarChartDashboard({ budgetList }) {
           margin={{
             top: 7,
           }}
+          className="-z-10"
         >
           <XAxis dataKey="name" />
           <YAxis />
