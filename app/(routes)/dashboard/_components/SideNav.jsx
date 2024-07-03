@@ -1,5 +1,5 @@
 "use client";
-import { useContext, createContext, useState, useEffect } from "react";
+import { useContext, createContext, useEffect } from "react";
 import { UserButton, useUser } from "@clerk/nextjs";
 import {
   LayoutGrid,
@@ -7,7 +7,6 @@ import {
   WalletMinimal,
   ChevronFirst,
   ChevronLast,
-  MoreVertical,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,9 +14,8 @@ import { usePathname } from "next/navigation";
 
 const SidebarContext = createContext();
 
-function SideNav() {
+function SideNav({ sidebarExpanded, setSidebarExpanded }) {
   const { user } = useUser();
-  const [expanded, setExpanded] = useState(true);
   const path = usePathname();
 
   const menuList = [
@@ -46,64 +44,64 @@ function SideNav() {
   }, [path]);
 
   return (
-    <SidebarContext.Provider value={{ expanded }}>
-      <div className="flex h-screen">
-        <aside
-          className={`transition-all duration-300 ${
-            expanded ? "w-64" : "w-16"
-          } bg-white border-r shadow-sm z-50 flex-shrink-0`}
-        >
-          <nav className="flex flex-col h-full">
-            <div className="p-4 pb-2 flex justify-between items-center">
-              <Link href="/">
-                <Image
-                  src={"/logo.svg"}
-                  alt="logo"
-                  width={60}
-                  height={20}
-                  className={`overflow-hidden transition-all ${
-                    expanded ? "block" : "hidden"
-                  }`}
-                />
-              </Link>
-              <button
-                onClick={() => setExpanded((curr) => !curr)}
-                className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100"
-              >
-                {expanded ? <ChevronFirst /> : <ChevronLast />}
-              </button>
-            </div>
-
-            <ul className="flex-auto px-3 ">
-              {menuList.map((menu) => (
-                <SidebarItem
-                  key={menu.id}
-                  icon={menu.icon}
-                  text={menu.name}
-                  active={path === menu.path}
-                  path={menu.path}
-                />
-              ))}
-            </ul>
-
-            <div className="border-t flex p-3">
-              <UserButton />
-              <div
-                className={`flex justify-between items-center overflow-hidden transition-all ${
-                  expanded ? "w-52 ml-3" : "w-0"
+    <SidebarContext.Provider
+      value={{ expanded: sidebarExpanded, setExpanded: setSidebarExpanded }}
+    >
+      <aside
+        className={`fixed inset-y-0 left-0 transition-all duration-300 ${
+          sidebarExpanded ? "w-64" : "w-16"
+        } bg-white border-r shadow-sm z-50`}
+      >
+        <nav className="flex flex-col h-full">
+          <div className="p-4 pb-2 flex justify-between items-center">
+            <Link href="/">
+              <Image
+                src={"/logo.svg"}
+                alt="logo"
+                width={60}
+                height={20}
+                className={`overflow-hidden transition-all ${
+                  sidebarExpanded ? "block" : "hidden"
                 }`}
-              >
-                <div className="leading-4">
-                  <h4 className="font-semibold">{user?.fullName}</h4>
-                  <span className="text-xs text-gray-600">
-                    {user?.primaryEmailAddress?.emailAddress}
-                  </span>
-                </div>
+              />
+            </Link>
+            <button
+              onClick={() => setSidebarExpanded((curr) => !curr)}
+              className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100"
+            >
+              {sidebarExpanded ? <ChevronFirst /> : <ChevronLast />}
+            </button>
+          </div>
+
+          <ul className="flex-auto px-3 ">
+            {menuList.map((menu) => (
+              <SidebarItem
+                key={menu.id}
+                icon={menu.icon}
+                text={menu.name}
+                active={path === menu.path}
+                path={menu.path}
+              />
+            ))}
+          </ul>
+
+          <div className="border-t flex p-3">
+            <UserButton />
+            <div
+              className={`flex justify-between items-center overflow-hidden transition-all ${
+                sidebarExpanded ? "w-52 ml-3" : "w-0"
+              }`}
+            >
+              <div className="leading-4">
+                <h4 className="font-semibold">{user?.fullName}</h4>
+                <span className="text-xs text-gray-600">
+                  {user?.primaryEmailAddress?.emailAddress}
+                </span>
               </div>
             </div>
-          </nav>
-        </aside>
-      </div>
+          </div>
+        </nav>
+      </aside>
     </SidebarContext.Provider>
   );
 }

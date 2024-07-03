@@ -31,11 +31,14 @@ function DashboardLayout({ children }) {
   return (
     <div className="flex">
       <div>
-        <SideNav className="bg-opacity-100" />
+        <SideNav
+          sidebarExpanded={sidebarExpanded}
+          setSidebarExpanded={setSidebarExpanded}
+        />
       </div>
       <div
         className={`flex-1 ${
-          sidebarExpanded ? "md:ml-0 ml-16" : "md:ml-50"
+          sidebarExpanded ? "ml-64" : "ml-16"
         } transition-all duration-300`}
       >
         <DashboardHeader />
